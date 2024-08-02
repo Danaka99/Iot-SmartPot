@@ -1,0 +1,72 @@
+#define BLYNK_TEMPLATE_ID "TMPL6dwiN0w8w"
+#define BLYNK_TEMPLATE_NAME "MY NPM"
+#define BLYNK_AUTH_TOKEN "HRgZRC6vWnaVvyPUINliuPKvQ70U1Kgl"
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+
+char auth[] = BLYNK_AUTH_TOKEN;
+char ssid[] = "tirosh";
+char pass[] = "12345678";
+
+String incoming, dumy, LDRValue, soil, N, P, K;
+int a1;
+
+#define BLYNK_PRINT Serial
+
+void setup() {
+  Serial.begin(9600);
+  Serial2.begin(9600);
+  Blynk.begin(auth, ssid, pass);
+
+}
+
+void loop() {
+
+  Blynk.run();
+
+  if (Serial2.available() > 0) {
+    incoming = Serial2.readString();
+  }
+  Serial.print("Data : ");
+  Serial.println(incoming);
+  delay(1000);
+  a1 = incoming.indexOf(';');
+  if (a1 == 2) {
+    a1 = incoming.indexOf(';');
+    dumy = incoming.substring(0, a1);
+    Serial.print("dumy Data: ");
+    Serial.println(dumy);
+
+    int a2 = incoming.indexOf(';', a1 + 1);
+    LDRValue = incoming.substring(a1 + 1, a2);
+    Serial.print("Sun Light ");
+    Serial.println(LDRValue);
+    Blynk.virtualWrite(V0, LDRValue);
+
+    int a3 = incoming.indexOf(';', a2 + 1);
+    soil = incoming.substring(a2 + 1, a3);
+    Serial.print("Moisture: ");
+    Serial.println(soil);
+    Blynk.virtualWrite(V1, soil);
+
+    int a4 = incoming.indexOf(';', a3 + 1);
+    N = incoming.substring(a3 + 1, a4);
+    Serial.print("Nitrogen: ");
+    Serial.println(N);
+    Blynk.virtualWrite(V2, N);
+
+    int a5 = incoming.indexOf(';', a4 + 1);
+    P = incoming.substring(a4 + 1, a5);
+    Serial.print("Phosphorous: ");
+    Serial.println(P);
+    Blynk.virtualWrite(V3, P);
+
+    int a6 = incoming.indexOf(';', a5 + 1);
+    K = incoming.substring(a5 + 1, a6);
+    Serial.print("Potassium: ");
+    Serial.println(K);
+    Blynk.virtualWrite(V4, K);
+  }
+}
